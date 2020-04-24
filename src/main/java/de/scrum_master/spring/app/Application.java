@@ -1,20 +1,25 @@
-package de.scrum_master.spring;
+package de.scrum_master.spring.app;
 
+import de.scrum_master.spring.config.CglibPoxyConfig;
+import de.scrum_master.spring.config.JdkProxyConfig;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 public class Application {
   public static void main(String[] args) {
-    try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class)) {
+    Class<?> configClass = JdkProxyConfig.class;
+    if (args.length > 0 && args[0].toUpperCase().contains("CGLIB"))
+      configClass = CglibPoxyConfig.class;
+
+    try (ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(configClass)) {
       useInterfaceLogic(context);
       useClassWithoutInterface(context);
-      if (isCglibMode())
-        useClassLogic(context);
+      useClassLogic(context);
     }
   }
 
-  private static void useInterfaceLogic(ConfigurableApplicationContext context) {
+  private static void useInterfaceLogic(ApplicationContext context) {
     IFoo iFoo = (IFoo) context.getBean("fooImpl");
     System.out.println("Bean class = " + iFoo.getClass());
     iFoo.doSomething(11);
@@ -27,7 +32,7 @@ public class Application {
 
   }
 
-  private static void useClassWithoutInterface(ConfigurableApplicationContext context) {
+  private static void useClassWithoutInterface(ApplicationContext context) {
     WithoutInterface withoutInterface = (WithoutInterface) context.getBean("withoutInterface");
     System.out.println("Bean class = " + withoutInterface.getClass());
     withoutInterface.doSomething(11);
@@ -36,21 +41,12 @@ public class Application {
     printSeparator();
   }
 
-  private static boolean isCglibMode() {
-    return Config.class
-      .getDeclaredAnnotation(EnableAspectJAutoProxy.class)
-      .proxyTargetClass();
-  }
-
   /**
-   * This class only runs correctly in CGLIB proxy mode.
-   * If you run it in JDK proxy mode, you will see exceptions like:
-   * <p></p>
-   * <code>{@code
-   * java.lang.ClassCastException: com.sun.proxy.$Proxy19 cannot be cast to de.scrum_master.spring.FooImpl
-   * }</code>
+   * This method only runs correctly in CGLIB proxy mode.
+   *
+   * @throws ClassCastException when trying to cast a JDK proxy to a non-interface type
    */
-  private static void useClassLogic(ConfigurableApplicationContext context) {
+  private static void useClassLogic(ApplicationContext context) throws ClassCastException {
     FooImpl fooImpl = (FooImpl) context.getBean("fooImpl");
     System.out.println("Bean class = " + fooImpl.getClass());
     fooImpl.doSomething(11);

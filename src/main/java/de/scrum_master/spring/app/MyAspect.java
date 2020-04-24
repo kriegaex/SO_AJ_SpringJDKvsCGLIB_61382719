@@ -1,4 +1,4 @@
-package de.scrum_master.spring;
+package de.scrum_master.spring.app;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
