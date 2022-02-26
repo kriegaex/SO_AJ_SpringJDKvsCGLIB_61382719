@@ -29,6 +29,17 @@
       <artifactId>aspectjweaver</artifactId>
       <version>${aspectj.version}</version>
     </dependency>
+    <!--
+      Not necessary for Spring because Spring contains an embedded CGLIB.
+      But maybe you want to experiment with net.sf.cglib.proxy.Proxy.isProxyClass outside of Spring.
+     -->
+    <!--
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+    -->
   </dependencies>
 
 </project>

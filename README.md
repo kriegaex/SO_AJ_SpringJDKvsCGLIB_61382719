@@ -19,19 +19,22 @@ Here is sample some output.
 ## JDK mode
 
 ```text
-Bean class = class com.sun.proxy.$Proxy19
+Bean class: com.sun.proxy.$Proxy19
+Proxy type: JDK
 execution(void de.scrum_master.spring.app.IFoo.doSomething(int))
 Doing something in base class
 
 ----------------------------------------
 
-Bean class = class com.sun.proxy.$Proxy19
+Bean class: com.sun.proxy.$Proxy19
+Proxy type: JDK
 execution(void de.scrum_master.spring.app.IFoo.doSomething(int))
 [Override] Doing something in sub class
 
 ----------------------------------------
 
-Bean class = class de.scrum_master.spring.app.WithoutInterface$$EnhancerBySpringCGLIB$$a798682a
+Bean class: de.scrum_master.spring.app.WithoutInterface$$EnhancerBySpringCGLIB$$df0e80e7
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.WithoutInterface.doSomething(int))
 Doing something in class without interface
 execution(void de.scrum_master.spring.app.WithoutInterface.doSomethingElse())
@@ -41,14 +44,20 @@ Calculating something in class without interface
 
 ----------------------------------------
 
-Exception in thread "main" java.lang.ClassCastException: com.sun.proxy.$Proxy19 cannot be cast to de.scrum_master.spring.app.FooImpl
-    at de.scrum_master.spring.app.Application.useClassLogic(Application.java:50)
-    at de.scrum_master.spring.app.Application.main(Application.java:18)
+java.lang.ClassCastException: com.sun.proxy.$Proxy19 cannot be cast to de.scrum_master.spring.app.FooImpl
+  at de.scrum_master.spring.app.Application.useClassLogic(Application.java:51)
+  at de.scrum_master.spring.app.Application.main(Application.java:19)
+
+----------------------------------------
+
+java.lang.ClassCastException: com.sun.proxy.$Proxy19 cannot be cast to de.scrum_master.spring.app.FooImplChild
+  at de.scrum_master.spring.app.Application.useClassLogic(Application.java:63)
+  at de.scrum_master.spring.app.Application.main(Application.java:19)
 ```
 
 Please note:
   * Bean class `com.sun.proxy.$Proxy19` proves that for classes implementing interfaces Spring AOP creates JDK proxies.
-  * Bean class `WithoutInterface$$EnhancerBySpringCGLIB$$a798682a` shows that CGLIB proxies will be created if the
+  * Bean class `WithoutInterface$$EnhancerBySpringCGLIB$$df0e80e7` shows that CGLIB proxies will be created if the
     target class does not implement any interface. 
   * The `ClassCastException` shows that you cannot cast a JDK proxy to anything else but ones of its implemented
     interface types. This is a JDK proxy limitation because JDK proxies only work with interfaces. Consequently, the
@@ -60,19 +69,22 @@ Please note:
 ## CGLIB mode
 
 ```text
-Bean class = class de.scrum_master.spring.app.FooImpl$$EnhancerBySpringCGLIB$$fd0a816c
+Bean class: de.scrum_master.spring.app.FooImpl$$EnhancerBySpringCGLIB$$b6e1c863
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.FooImpl.doSomething(int))
 Doing something in base class
 
 ----------------------------------------
 
-Bean class = class de.scrum_master.spring.app.FooImplChild$$EnhancerBySpringCGLIB$$71a459b4
+Bean class: de.scrum_master.spring.app.FooImplChild$$EnhancerBySpringCGLIB$$2b7ba0ab
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.FooImplChild.doSomething(int))
 [Override] Doing something in sub class
 
 ----------------------------------------
 
-Bean class = class de.scrum_master.spring.app.WithoutInterface$$EnhancerBySpringCGLIB$$1dbcb265
+Bean class: de.scrum_master.spring.app.WithoutInterface$$EnhancerBySpringCGLIB$$d793f95c
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.WithoutInterface.doSomething(int))
 Doing something in class without interface
 execution(void de.scrum_master.spring.app.WithoutInterface.doSomethingElse())
@@ -82,7 +94,8 @@ Calculating something in class without interface
 
 ----------------------------------------
 
-Bean class = class de.scrum_master.spring.app.FooImpl$$EnhancerBySpringCGLIB$$fd0a816c
+Bean class: de.scrum_master.spring.app.FooImpl$$EnhancerBySpringCGLIB$$b6e1c863
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.FooImpl.doSomething(int))
 Doing something in base class
 execution(void de.scrum_master.spring.app.FooImpl.doSomethingElse())
@@ -92,7 +105,8 @@ Calculating something in base class
 
 ----------------------------------------
 
-Bean class = class de.scrum_master.spring.app.FooImplChild$$EnhancerBySpringCGLIB$$71a459b4
+Bean class: de.scrum_master.spring.app.FooImplChild$$EnhancerBySpringCGLIB$$2b7ba0ab
+Proxy type: CGLIB
 execution(void de.scrum_master.spring.app.FooImplChild.doSomething(int))
 [Override] Doing something in sub class
 execution(void de.scrum_master.spring.app.FooImpl.doSomethingElse())
@@ -104,7 +118,7 @@ Doing even more in subclass
 ```
 
 Please note:
-  * Now we always see bean classes like `MyClassName$$EnhancerBySpringCGLIB$$a798682a`, i.e. Spring creates CGLIB
+  * Now we always see bean classes like `MyClassName$$EnhancerBySpringCGLIB$$b6e1c863`, i.e. Spring creates CGLIB
     proxies in all cases. 
   * Because the CGLIB proxies are direct subclasses of their delegate objects, we can now cast the beans to those
     classes and call all of their respective methods. At the end of the console log there are no more
