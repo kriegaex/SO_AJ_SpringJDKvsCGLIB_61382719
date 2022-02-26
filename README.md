@@ -10,6 +10,10 @@ Due to restrictive pre-configuration, Spring Boot currently always runs in CGLIB
 [issue #12194](https://github.com/spring-projects/spring-boot/issues/12194). So this effect has to be demonstrated in a
 classical Spring setup not using Spring Boot or any of its dependencies.
 
+I used this example project to answer the following Stack Overflow questions:
+  * https://stackoverflow.com/a/61390594/1082681
+  * https://stackoverflow.com/a/70491009/1082681
+
 Feel free to inspect this code base including the Maven POM. Just run the `Application` class with or without a command
 line parameter containing `CGLIB` (case-insensitive) in order to switch between both modes (JDK proxy mode is the
 default).
